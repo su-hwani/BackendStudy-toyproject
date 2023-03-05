@@ -3,6 +3,8 @@
 // const { ApolloServer, gql } = require('apollo-server');
 import { ApolloServer, gql } from 'apollo-server'
 import { checkValidationPhone, getToken, sendTokenToSMS } from './phone.js'
+//import 'dotenv/config' //개인정보 입력하는 .env 파일
+import { checkEmail, getWelcomeTemplate, sendTemplateToEmail } from './email.js'
 
 // The GraphQL schema // API DOCS 와 동일
 const typeDefs = gql`
@@ -67,6 +69,22 @@ const resolvers = { // API 와 동일
     },
   },
 }
+
+app.post("/users", (req, res) => {
+  const user = req.body
+
+  // 1. 이메일이 정상인지 확인(1-존재여부, 2-"@"포함여부)
+  const isValid = checkValidationEmail(user.email)
+
+  if(isValid){
+      // 2. 가입환영 템플릿 만들기
+      const mytemplate = getWelcomeTemplate(user)
+
+      // 3. 이메일에 가입환영 템플릿 전송하기
+      sendTemplateToEmail(user.email, mytemplate)
+      res.send("가입완료!!!")
+  }
+});
 
 const server = new ApolloServer({
   typeDefs,
