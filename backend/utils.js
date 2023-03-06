@@ -7,4 +7,12 @@ export function getToday() {
     return `${yyyy}-${mm}-${dd}`;
   }
   
-  console.log(getToday());
+export function getToday_Float() {
+  const date = new Date();
+  const yyyy = date.getFullYear();
+  const mm = date.getMonth() + 1;
+  const dd = date.getDate();
+  
+  const time = parseFloat('yyyy'+'mm'+'dd')
+  return time;
+}
