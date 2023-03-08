@@ -1,6 +1,6 @@
-import { checkEmail, getWelcomeTemplate, sendTemplateToEmail } from "./email.js";
-import { User_temporary } from './models/user_temporary.js'
-import { User_permanent } from './models/user_permanent.js'
+
+import { User_temporary } from '../models/user_temporary.js'
+import { User_permanent } from '../models/user_permanent.js'
 import { getToday, getToday_Float } from "./utils.js"
 import { encryption, decryption} from "./pw_hashing.js"
 
@@ -59,7 +59,7 @@ const resolvers = {
     insertUser: async (_, args) => {
       // PassWord 암호화 
       const encryption_PW = await encryption(args._PW)
-
+      
       const user_temporary = new User_temporary({ 
         name: args.name,
         mail: args.mail,
