@@ -1,32 +1,28 @@
 import { getToday } from "./utils.js";
 import nodemailer from 'nodemailer';
+import { getToken } from "./token.js";
+import { get_token_template } from "../models/token_template.js";
+import { get_welcome_template } from "../models/welcome_template.js";
 //import 'dotenv/config'
 
 //라이브러리 설치 : yarn add nodemailer
 
-export function checkEmail(myemail) {
+export async function checkEmail(myemail) {
   if (myemail === undefined || myemail.includes("@") === false) {
-    console.log("에러 발생!!! 이메일 주소를 제대로 입력해 주세요!!!");
     return false;
   } else {
     return true;
   }
 }
 
-export function getWelcomeTemplate({ name, age, school }) {
-  const mytemplate = `
-        <html>
-            <body>
-                <h1>${name}님 가입을 환영합니다!!!</h1>
-                <hr />
-                <div>이름: ${name}</div>
-                <div>나이: ${age}</div>
-                <div>학교: ${school}</div>
-                <div>가입일: ${getToday()}</div>
-            </body>
-        </html>
-    `;
-  return mytemplate;
+export async function getWelcomeTemplate(args) {
+  const template = get_welcome_template()
+  return template;
+}
+
+export async function getTokenTemplate(args) {
+  const template = get_token_template()
+  return template;
 }
 
 //사용시 .env 파일 만들어서 EMAIL_USER, EMIAL_PASS, EMAIL_SENDER 입력하기
@@ -46,7 +42,7 @@ export async function sendTemplateToEmail(email, mytemplate) {
   const result = await transporter.sendMail({
       from: EMAIL_SENDER,
       to: email,
-      subject: "[코드캠프] 가입을 축하합니다!!!",
+      subject: "[Koss] 이메일 인증 해주세요!!",
       html: mytemplate
   })
       console.log(result);

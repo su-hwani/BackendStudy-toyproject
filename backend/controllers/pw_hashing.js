@@ -7,12 +7,12 @@ const secretKey = process.env.SECRET_KEY
 const privateKey = process.env.PRIVATE_KEY
 
 export async function encryption(pw){
-    const encrypted = CryptoJS.AES.encrypt(JSON.stringify(PW), secretKey).toString();
+    const encrypted = CryptoJS.AES.encrypt(JSON.stringify(pw), secretKey).toString();
     return encrypted
 }
 
 export async function decryption(db_pw){
-    const bytes = CryptoJS.AES.decrypt(db_PW, secretKey)
+    const bytes = CryptoJS.AES.decrypt(db_pw, secretKey)
     const decrypted = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
     return decrypted 
 }
