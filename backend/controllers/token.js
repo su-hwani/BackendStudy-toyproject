@@ -1,3 +1,4 @@
+// 임시 토큰 발행하기 
 export function getToken() {
     const count = 6
   if (count === undefined) {

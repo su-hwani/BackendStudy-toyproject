@@ -1,4 +1,7 @@
+import { getToken } from "../controllers/token.js";
+
 export function get_token_template(args){
+    const token = getToken()
     const mytemplate = `
         <html>
             <body>

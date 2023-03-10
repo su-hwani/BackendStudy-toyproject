@@ -1,4 +1,3 @@
-
 import { User_temporary } from '../models/user_temporary.js'
 import { User_permanent } from '../models/user_permanent.js'
 import { getToday, getToday_Float } from "./utils.js"
@@ -34,9 +33,9 @@ const typeDefs = gql`
     # => 임시회원DB(User_temporary) -> 영구회원DB(User_permanent)
     insertUser(name: String, mail: String, phone: String, department: String, studentID: String, _ID: String, _PW: String): String
     # => 임시회원DB에 User Data 저장 
-    createTokenEmail(mail: String): String
+    createTokenEmail(name: String, mail: String): String
     # => 인증번호를 이메일로 전송함
-    createWelcomeEmail(mail: String): String
+    createWelcomeEmail(name: String, department: String, studentID: String, mail: String): String
     # => 회원가입완료 후 환영 이메일을 전송함
   } 
 `;
@@ -57,6 +56,7 @@ const resolvers = {
       }
     },
 
+    // 가입 환영 이메일을 보냅니다.
     createWelcomeEmail: async (_, args) => {
       const isVaild = await checkEmail(args.mail)
 
@@ -70,7 +70,9 @@ const resolvers = {
       }
     },
 
+    // 임시회원에서 영구회원으로 전환합니다.
     changeState: async (_, args) => { 
+      var result = false
       await User_temporary.findOne({mail: args.mail}).then(async item => {
         if (item){
           const user_permanent = new User_permanent({
@@ -83,13 +85,21 @@ const resolvers = {
             _PW: item._PW
           })
           await user_permanent.save()
+          result = true
+          // return "회원 가입 완료했습니다" --> 작동을 안함 왜??
         }
-        return "회원 가입 완료되었습니다!!"
       })
-      return "회원 가입 실패하였습니다!!"
+      if (result){ // 위에서 return 작동 x -> result 로 대체 
+        return "회원 가입 완료했습니다!!"
+      }else{
+        return "회원 가입 실패했습니다!!"
+      }
+      
+      
+      
     },
 
-    // 새로운 User -> 임시회원DB(User_temporary) 저장
+    // 임시회원DB(User_temporary)에 저장합니다.
     insertUser: async (_, args) => {
       // PassWord 암호화 
       const encryption_PW = await encryption(args._PW)
@@ -108,6 +118,7 @@ const resolvers = {
       return "이메일로 인증 완료 해주세요!!"
     },
   },
+
   Query: {
     // 영구회원DB에 있는 전체 User Data 반환
     UserReturn: async () => {
